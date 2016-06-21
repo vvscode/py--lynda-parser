@@ -19,10 +19,13 @@ import sys
 # from slugify import slugify
 # from bs4 import BeautifulSoup
 
+from lib import utils
+
 
 def main():
     """ Main parser function"""
     print('Parser main')
+    utils.mkdir('./tmp')
 
 
 if __name__ == '__main__':
