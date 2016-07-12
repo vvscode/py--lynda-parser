@@ -33,3 +33,19 @@ def set_progress(progress, description):
 def add_zero(number, length):
     # todo: find correct .format way
     return '0' * (length - len(str(number))) + str(number)
+
+
+def link_dl(link, filename, desc):
+    response = requests.get(link, stream=True)
+
+    with open(filename, 'wb') as file:
+        file_size = int(response.headers['Content-Length'])
+        file_size_dl = 0
+        chunk_size = 8192
+        for chunk in response.iter_content(chunk_size):
+            file_size_dl += len(chunk)
+            file.write(chunk)
+            progress = float(file_size_dl) / file_size
+            set_progress(progress, desc)
+
+        file.close()
