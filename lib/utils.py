@@ -28,3 +28,8 @@ def set_progress(progress, description):
 
     sys.stdout.write(text)
     sys.stdout.flush()
+
+
+def add_zero(number, length):
+    # todo: find correct .format way
+    return '0' * (length - len(str(number))) + str(number)
