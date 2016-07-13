@@ -130,3 +130,30 @@ def get_course(link, username, password, start, finish):
         i = index + 1
         get_item(id_course, item_chapter, item_id, item_name, add_zero(i, len_char_items) + '/' + str(len(items)),
                  session)
+
+
+def get_item(course_id, directory, item_id, item_name, desc, request):
+    prev_directory = os.getcwd()
+    mkdir(directory)
+    os.chdir(directory)
+
+    item_link = 'http://www.lynda.com/ajax/course/' + course_id + '/' + item_id + '/play'
+    sub_link = 'http://www.lynda.com/ajax/player/transcript?courseId=' + course_id + '&videoId=' + item_id
+
+    response = request.get(item_link)
+    item_info = (response.json())[1]['urls']
+
+    if '720' in item_info:
+        vid_link = item_info['720']
+    elif '540' in item_info:
+        vid_link = item_info['540']
+    elif '360' in item_info:
+        vid_link = item_info['360']
+    else:
+        print('Video is not in the required format')
+        sys.exit(1)
+
+    link_dl(vid_link, item_name + '.mp4', desc + ' (vid)')
+    link_dl(sub_link, item_name + '.srt', desc + ' (sub)')
+
+    os.chdir(prev_directory)
