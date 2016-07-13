@@ -96,3 +96,37 @@ def login(username, password):
     else:
         print(response)
         sys.exit(1)
+
+
+def get_course(link, username, password, start, finish):
+    session = login(username, password)
+
+    course = session.get(link)
+
+    soup = BeautifulSoup(course.content, 'html.parser')
+
+    id_course = soup.find(id='course-page').get('data-course-id')
+    title_course = slugify(soup.find('h1', class_='default-title').get_text())
+
+    chapters = soup.select('ul.course-toc > li > ul')
+    items = soup.find_all('a', class_='video-name')
+
+    len_char_chapters = len(str(len(chapters)))
+    len_char_items = len(str(len(items)))
+
+    mkdir(title_course)
+    os.chdir(title_course)
+
+    for index, item in enumerate(items, (start - 1)):
+        if index == finish:
+            break
+
+        chapter = item.find_parent('ul', class_='toc-items')
+
+        item_name = slugify(add_zero(index, len_char_items) + '. ' + item.get_text())
+        item_id = item.get('data-ga-value')
+        item_chapter = slugify(add_zero(chapters.index(chapter), len_char_chapters) + '. ' + chapter.find_previous('div', class_='chapter-row').find('h4').get_text())
+
+        i = index + 1
+        get_item(id_course, item_chapter, item_id, item_name, add_zero(i, len_char_items) + '/' + str(len(items)),
+                 session)
