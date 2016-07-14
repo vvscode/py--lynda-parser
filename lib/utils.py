@@ -3,6 +3,12 @@
 import os
 import errno
 import sys
+from io import open
+from builtins import str
+# external modules
+import requests
+from slugify import slugify
+from bs4 import BeautifulSoup
 
 
 def mkdir(directory):
